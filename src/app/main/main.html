@@ -1,0 +1,32 @@
+<div layout="vertical" layout-fill>
+
+  <md-content>
+    <header>
+      Scripter
+    </header>
+
+    <div layout-align="center">
+      <md-button ng-click="clearData()">Clear Data</md-button>
+
+      <md-input-container>
+        <md-select ng-model="selectedCategory" placeholder="Select category">
+          <md-option ng-value="category" ng-repeat="category in categories">{{ category.name }}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-button ng-click="addCategory();">Add Category</md-button>
+
+      <div ng-if="selectedCategory">
+        <md-input-container>
+          <md-select ng-model="selectedScript" placeholder="Select script">
+            <md-option ng-value="script" ng-repeat="script in scripts">{{ script.name }}</md-option>
+          </md-select>
+        </md-input-container>
+        <md-button ng-click="addScript();">Add Script</md-button>
+      </div>
+
+      <!--<parse-script script="selectedScript" variables="variables"></parse-script>-->
+
+    </div>
+  </md-content>
+
+</div>
