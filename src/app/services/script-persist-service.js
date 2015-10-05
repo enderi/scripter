@@ -3,10 +3,10 @@
 
   angular
     .module('scripter')
-    .factory('scriptService', scriptService);
+    .factory('scriptPersistService', scriptPersistService);
 
   /** @ngInject */
-  function scriptService($log, localStorageService) {
+  function scriptPersistService($log, localStorageService) {
     var scriptLocalStorageKey = 'scripts';
 
     var service = {
@@ -18,17 +18,18 @@
           return scripts;
         }
       },
-      add: function(name, category, description){
+      add: function(name, code, category, description){
         var scripts = this.get() || [], greatestIndex = 0;
-        console.log(scripts);
         angular.forEach(scripts, function(script){
           if(greatestIndex < script.id){
             greatestIndex = script.id;
           }
         });
+        console.log(name, code);
         scripts.push({
           name: name,
           id: greatestIndex + 1,
+          code: code,
           categoryId: category.id,
           description: description
         });

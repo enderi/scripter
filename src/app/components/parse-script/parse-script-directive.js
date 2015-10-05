@@ -6,18 +6,24 @@
     .directive('parseScript', parseScript);
 
   /** @ngInject */
-  function parseScript(script, variables) {
-    $log.log(script, variables);
-
-    return {
+  function parseScript(malarkey) {
+    var directive = {
       restrict: 'E',
       scope: {
+        extraValues: '='
       },
-      link: function(a, b, c){
-        console.log(a, b, c);
-      },
-      controllerAs: 'vm'
+      template: '&nbsp;',
+      link: linkFunc,
     };
+
+    return directive;
+
+    function linkFunc(scope, el, attr, vm) {
+      //console.log(scope, attr, vm);
+      scope.$watch('script', function(newValue){
+        //console.log('NEW: ', newValue);
+      })
+    }
   }
 
 })();

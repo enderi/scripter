@@ -1,32 +1,50 @@
-<div layout="vertical" layout-fill>
+<md-content>
+  <md-toolbar layout="row">
+    <div class="md-toolbar-tools">
+      <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+        <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
+      </md-button>
+      <h1>Scripter</h1>
+    </div>
+  </md-toolbar>
 
-  <md-content>
-    <header>
-      Scripter
-    </header>
+  <!-- toobar end -->
 
-    <div layout-align="center">
+  <div layout="row">
+    <div layout="column" flex layout-align="center center">
       <md-button ng-click="clearData()">Clear Data</md-button>
-
-      <md-input-container>
-        <md-select ng-model="selectedCategory" placeholder="Select category">
-          <md-option ng-value="category" ng-repeat="category in categories">{{ category.name }}</md-option>
-        </md-select>
-      </md-input-container>
-      <md-button ng-click="addCategory();">Add Category</md-button>
-
-      <div ng-if="selectedCategory">
+      <div>
         <md-input-container>
-          <md-select ng-model="selectedScript" placeholder="Select script">
-            <md-option ng-value="script" ng-repeat="script in scripts">{{ script.name }}</md-option>
+          <md-select ng-model="selectedScript">
+            <md-optgroup label="selectedScript">
+              <md-option ng-value="script" ng-repeat="script in scripts">{{script.name}}</md-option>
+            </md-optgroup>
           </md-select>
         </md-input-container>
-        <md-button ng-click="addScript();">Add Script</md-button>
+        <md-input-container ng-if="selectedScript.id">
+          <input ng-model="selectedScript.id" disabled>
+        </md-input-container>
       </div>
+      <md-input-container>
+        <label>Name:</label>
+        <input ng-model="script.name">
+      </md-input-container>
+      <md-input-container>
+        <label>Script:</label>
+        <textarea ng-model="script.code" columns="1" md-maxlength="500"></textarea>
+      </md-input-container>
+      <md-input-container ng-repeat="variable in variables">
+        <div>
+          <label>{{variable}}</label>
+          <input name="variable" ng-model="variableValues[variable]">
+        </div>
+      </md-input-container>
+      <parse-script script="fullScript" variables="{{variables}}"></parse-script>
 
-      <!--<parse-script script="selectedScript" variables="variables"></parse-script>-->
-
+      <md-button class="md-raised" ng-disabled="!isScriptOk()" ng-click="saveScript()">Save</md-button>
     </div>
-  </md-content>
-
-</div>
+    <div layout="column" flex>
+      {{fullScript}}
+    </div>
+  </div>
+</md-content>
