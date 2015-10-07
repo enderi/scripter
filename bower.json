@@ -27,8 +27,8 @@
   "resolutions": {
     "jquery": "~2.1.4",
     "angular": "~1.4.2"
-},
-"overrides": {
+  },
+  "overrides": {
     "ace-builds": {
       "main": [
         "src-min-noconflict/ace.js",
@@ -38,5 +38,5 @@
         "src-min-noconflict/theme-eclipse.js"
       ]
     }
- }
+  }
 }

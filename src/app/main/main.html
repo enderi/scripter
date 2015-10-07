@@ -12,7 +12,7 @@
 
   <div layout="row">
     <div layout="column" flex layout-align="top left">
-        <h2>Script:</h2>
+      <h2>Script:</h2>
       <!--<md-button ng-click="clearData()">Clear Data</md-button>-->
       <div>
         <md-input-container>
@@ -28,11 +28,11 @@
         <input ng-model="script.name">
       </md-input-container>
       <md-input-container>
-          <md-select ng-change="modeChanged()" ng-model="scriptMode">
-              <md-optgroup label="Mode">
-                <md-option ng-value="scriptMode" ng-repeat="scriptMode in scriptModes">{{scriptMode}}</md-option>
-              </md-optgroup>
-          </md-select>
+        <md-select ng-change="modeChanged()" ng-model="scriptMode">
+          <md-optgroup label="Mode">
+            <md-option ng-value="scriptMode" ng-repeat="scriptMode in scriptModes">{{scriptMode}}</md-option>
+          </md-optgroup>
+        </md-select>
       </md-input-container>
       <md-input-container>
         <label>Script:</label>
@@ -42,23 +42,23 @@
       </md-input-container>
       <md-button class="md-raised" ng-disabled="!isScriptOk()" ng-click="saveScript()">Save</md-button>
 
-  </div>
-  <div layout="column" flex layout-align="top center">
+    </div>
+    <div layout="column" flex layout-align="top center">
 
-          <h2>Variables</h2>
+      <h2>Variables</h2>
 
-          <md-input-container ng-repeat="variable in variables">
-            <div>
-              <label>{{variable}}</label>
-              <input name="variable" ng-model="variableValues[variable]">
-            </div>
-          </md-input-container>
+      <md-input-container ng-repeat="variable in variables">
+        <div>
+          <label>{{variable}}</label>
+          <input name="variable" ng-model="variableValues[variable]">
+        </div>
+      </md-input-container>
     </div>
     <div layout="column" flex>
-        <h2>Output:</h2>
-        <div ui-ace="aceOption" readonly ng-model="fullScript">
+      <h2>Output:</h2>
+      <div ui-ace="aceOption" readonly ng-model="fullScript">
 
-        </div>
+      </div>
     </div>
 
   </div>
