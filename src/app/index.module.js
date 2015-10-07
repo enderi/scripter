@@ -12,7 +12,8 @@
       'ui.router',
       'ngMaterial',
       'toastr',
-      'LocalStorageModule'
+      'LocalStorageModule',
+      'ui.ace'
     ]);
 
 })();

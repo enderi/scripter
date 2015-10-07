@@ -32,6 +32,13 @@
       <md-input-container>
         <label>Script:</label>
         <textarea ng-model="script.code" columns="1" md-maxlength="500"></textarea>
+        <div ui-ace="{
+            useWrapMode: true,
+            showGutter: false,
+            theme: 'twilight',
+        }" ng-model="script.code">
+
+        </div>
       </md-input-container>
       <md-input-container ng-repeat="variable in variables">
         <div>
@@ -43,8 +50,11 @@
 
       <md-button class="md-raised" ng-disabled="!isScriptOk()" ng-click="saveScript()">Save</md-button>
     </div>
-    <div layout="column" flex>
-      {{fullScript}}
+    <div layout="column" flex
+        <div ui-ace readonly ng-model="fullScript">
+
+        </div>
     </div>
+
   </div>
 </md-content>
