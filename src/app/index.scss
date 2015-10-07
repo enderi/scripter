@@ -85,11 +85,11 @@ section.jumbotron {
 
     img.pull-right {
       float: right;
-      width: 100px;
+      width: 100%;
     }
   }
 }
-.ace_editor { height: 200px; }
+.ace_editor { height: 400px; width: 300px;}
 /**
  *  Do not remove the comment below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

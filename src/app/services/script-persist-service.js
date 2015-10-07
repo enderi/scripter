@@ -25,7 +25,6 @@
             greatestIndex = script.id;
           }
         });
-        console.log(name, code);
         scripts.push({
           name: name,
           id: greatestIndex + 1,

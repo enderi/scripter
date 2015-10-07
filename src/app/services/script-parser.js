@@ -10,15 +10,16 @@
       var variables = [];
       _.each(splittedTags, function(tag){
         if(tag[0] === 'var' && tag.length === 2){
-          variables.push(tag[1]);
+            if(!_.contains(variables, tag[1])){
+                variables.push(tag[1]);
+            }
         }
       });
       return variables;
     }
 
-    function parseScript(script){
-      var tagIndexes = getStartAndEndTags(script);
-      //console.log(tagIndexes);
+    function parseScript(){
+
     }
 
     function getTags(script){
@@ -59,14 +60,15 @@
     function replaceVariables(script, variables){
       var newScript = script;
       _.each(variables, function(variable, key){
-        newScript = newScript.replace('#{var:' + key + '}', variable);
+          var regExp = new RegExp('#{var:' + key + '}', 'g');
+        newScript = newScript.replace(regExp, variable);
       });
       return newScript;
     }
 
 
   /** @ngInject */
-  function scriptParser($log) {
+  function scriptParser() {
     var service = {
       getVariables: parseVariables,
       buildScript: parseScript,

@@ -11,21 +11,13 @@
     scriptParser,
     categoryService,
     scriptPersistService,
-    $log,
-    $mdDialog) {
+    $log) {
 
     $scope.variableValues = {};
-    function addCategoryCtrl($scope, $mdDialog){
-      $scope.add = function(){
-        categoryService.add($scope.newCategory);
-        init();
-        $mdDialog.hide();
-      }
-    }
+    $scope.scriptModes = ['SQL', 'JSON', 'javascript', 'HTML']
 
     $scope.clearData = function(){
       categoryService.clear();
-      scriptService.clear();
       init();
     }
 
@@ -42,18 +34,34 @@
       $scope.script = newValue;
     });
 
-    $scope.$watch('script', function(newValue, oldValue){
+    $scope.$watch('script', function(newValue){
       if(newValue){
-        $scope.fullScript = scriptParser.buildScript(newValue.code);
         $scope.variables = scriptParser.getVariables(newValue.code);
+        $scope.fullScript = scriptParser.replaceVariables(
+            $scope.script.code,
+            $scope.variableValues);
       }
     }, true);
     $scope.$watch('variableValues', function(newValue, oldValue){
       if(!_.isEmpty(newValue)){
-        console.log(newValue);
         $scope.fullScript = scriptParser.replaceVariables($scope.script.code, newValue);
       }
     }, true);
+
+    $scope.aceLoaded = function(_editor){
+        $log.log(_editor);
+    };
+
+    $scope.aceOption = {
+        mode: ($scope.scriptMode || '').toLowerCase(),
+        onLoad: function (_ace) {
+
+          // HACK to have the ace instance in the scope...
+          $scope.modeChanged = function () {
+            _ace.getSession().setMode("ace/mode/" + $scope.scriptMode.toLowerCase());
+          };
+      }
+  };
 
     function init(){
       //$scope.categories = categoryService.get();
