@@ -13,7 +13,8 @@
       'ngMaterial',
       'toastr',
       'LocalStorageModule',
-      'ui.ace'
+      'ui.ace',
+      'indexedDB'
     ]);
 
 })();

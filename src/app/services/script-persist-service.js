@@ -6,43 +6,45 @@
     .factory('scriptPersistService', scriptPersistService);
 
   /** @ngInject */
-  function scriptPersistService($log, localStorageService) {
+  function scriptPersistService($log, $q, $indexedDB) {
     var scriptLocalStorageKey = 'scripts';
+    var dbKey = 'script';
+
+    function openStore(fn) {
+      return $indexedDB.openStore(dbKey, fn);
+    }
+
+    var cachedScripts = null;
 
     var service = {
-      get: function(category) {
-        var scripts = localStorageService.get(scriptLocalStorageKey);
-        if (category) {
-          return _.filter(scripts, {
-            categoryId: category.id
+      get: function(id) {
+        if (!id) {
+          return openStore(function(store) {
+            return store.getAll()
+              .then(function(data) {
+                cachedScripts = data;
+                return data;
+              });
           });
         } else {
-          return scripts;
+          var deferred = $q.defer();
+          var item = _.find(cachedScripts, {
+            id: +id
+          });
+          if (item) {
+            deferred.resolve(item);
+          } else {
+            deferred.reject();
+          }
+          return deferred.promise;
         }
       },
-      add: function(name, code, category, description) {
-        var scripts = this.get() || [],
-          greatestIndex = 0;
-        angular.forEach(scripts, function(script) {
-          if (greatestIndex < script.id) {
-            greatestIndex = script.id;
-          }
+      save: function(script) {
+        return openStore(function(store) {
+          return store.upsert(script);
         });
-        scripts.push({
-          name: name,
-          id: greatestIndex + 1,
-          code: code,
-          categoryId: category.id,
-          description: description
-        });
-        this.save(scripts);
       },
-      save: function(scripts) {
-        localStorageService.set(scriptLocalStorageKey, scripts);
-      },
-      clear: function() {
-        localStorageService.set(scriptLocalStorageKey, null);
-      }
+      delete: function() {}
     };
 
     return service;

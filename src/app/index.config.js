@@ -3,7 +3,8 @@
 
   angular
     .module('scripter')
-    .config(config);
+    .config(config)
+    .config(indexedDbConfig);
 
   /** @ngInject */
   function config($logProvider, toastrConfig, localStorageServiceProvider) {
@@ -18,6 +19,18 @@
     toastrConfig.progressBar = true;
 
     localStorageServiceProvider.setPrefix('scripter');
+  }
+
+  function indexedDbConfig($indexedDBProvider){
+      $indexedDBProvider
+        .connection('scriptDB')
+        .upgradeDatabase(1, function(event, db, tx){
+            var objStore = db.createObjectStore('script', {keyPath: 'id', autoIncrement: true});
+            /*objStore.createIndex('id', {unique: true});
+            objStore.createIndex('name', {unique: true});
+            objStore.createIndex('description', {unique: false});
+            objStore.createIndex('scriptMode', {unique: false});*/
+        });
   }
 
 })();

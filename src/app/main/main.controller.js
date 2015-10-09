@@ -19,32 +19,57 @@
     $scope.clearData = function() {
       categoryService.clear();
       init();
-    }
+    };
 
     $scope.isScriptOk = function() {
       return $scope.script && $scope.script.name && $scope.script.code;
-    }
+    };
 
     $scope.saveScript = function() {
-      scriptPersistService.add($scope.script.name, $scope.script.code, 'category', 'description');
+      scriptPersistService.save($scope.script);
+
+      init();
+    };
+
+    $scope.clearScript = function() {
+      $scope.selectedScript = null;
+      $scope.script = null;
+
+      $scope.variableValues = null;
       init();
     }
 
     $scope.$watch('selectedScript', function(newValue) {
-      $scope.script = newValue;
+      $scope.script = _.find($scope.scripts, {
+        id: newValue
+      });
     });
 
     $scope.$watch('script', function(newValue) {
       if (newValue) {
-        $scope.variables = scriptParser.getVariables(newValue.code);
-        $scope.fullScript = scriptParser.replaceVariables(
-          $scope.script.code,
-          $scope.variableValues);
+        scriptParser.getVariables(newValue.code)
+          .then(function(variables) {
+            $scope.variables = variables;
+            return variables;
+          })
+          .then(replaceVariables);
+
       }
     }, true);
+
+    function replaceVariables() {
+      scriptParser.replaceVariables(
+          $scope.script.code,
+          $scope.variableValues
+        )
+        .then(function(data) {
+          $scope.fullScript = data;
+        });
+    }
+
     $scope.$watch('variableValues', function(newValue, oldValue) {
       if (!_.isEmpty(newValue)) {
-        $scope.fullScript = scriptParser.replaceVariables($scope.script.code, newValue);
+        replaceVariables();
       }
     }, true);
 
@@ -53,23 +78,24 @@
     };
 
     $scope.aceOption = {
-      mode: ($scope.scriptMode || '').toLowerCase(),
+      mode: ($scope.script && $scope.script.scriptMode || '').toLowerCase(),
       onLoad: function(_ace) {
 
         // HACK to have the ace instance in the scope...
         $scope.modeChanged = function() {
-          _ace.getSession().setMode("ace/mode/" + $scope.scriptMode.toLowerCase());
+          if ($scope.script && $scope.script.scriptMode) {
+            _ace.getSession().setMode("ace/mode/" + $scope.script.scriptMode.toLowerCase());
+          }
         };
+        _ace.$blockScrolling = Infinity;
       }
     };
 
     function init() {
-      //$scope.categories = categoryService.get();
-      $scope.scripts = scriptPersistService.get();
-      $scope.script = {
-        code: 'copy #{var:mistä} #{var:mihin}',
-        name: 'Select'
-      };
+      scriptPersistService.get()
+        .then(function(all) {
+          $scope.scripts = all;
+        });
     }
 
     init();

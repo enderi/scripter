@@ -1,46 +1,48 @@
 <md-content>
   <md-toolbar layout="row">
     <div class="md-toolbar-tools">
-      <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
-        <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
-      </md-button>
       <h1>Scripter</h1>
     </div>
   </md-toolbar>
 
-  <!-- toobar end -->
-
   <div layout="row">
     <div layout="column" flex layout-align="top left">
       <h2>Script:</h2>
-      <!--<md-button ng-click="clearData()">Clear Data</md-button>-->
-      <div>
-        <md-input-container>
-          <md-select ng-model="selectedScript">
-            <md-optgroup label="selectedScript">
-              <md-option ng-value="script" ng-repeat="script in scripts">{{script.name}}</md-option>
-            </md-optgroup>
-          </md-select>
-        </md-input-container>
-      </div>
       <md-input-container>
-        <label>Name:</label>
-        <input ng-model="script.name">
-      </md-input-container>
-      <md-input-container>
-        <md-select ng-change="modeChanged()" ng-model="scriptMode">
-          <md-optgroup label="Mode">
-            <md-option ng-value="scriptMode" ng-repeat="scriptMode in scriptModes">{{scriptMode}}</md-option>
-          </md-optgroup>
+        <label>Saved Scripts</label>
+        <md-select ng-model="selectedScript" aria-label="Selected script">
+          <md-option ng-repeat="script in scripts track by $index" ng-value="script.id">
+            {{ script.name }}
+          </md-option>
         </md-select>
       </md-input-container>
+      <md-content layout-padding layout="row" layout-sm="column">
+        <md-input-container>
+          <label>Name:</label>
+          <input ng-model="script.name">
+        </md-input-container>
+        <md-input-container>
+          <label>Mode</label>
+          <md-select ng-change="modeChanged()" ng-model="script.scriptMode" aria-label="Script mode">
+            <md-option ng-repeat="scriptMode in scriptModes" ng-value="scriptMode">
+              {{ scriptMode }}
+            </md-option>
+          </md-select>
+        </md-input-container>
+      </md-content>
       <md-input-container>
-        <label>Script:</label>
         <div ui-ace="aceOption" ng-model="script.code">
 
         </div>
       </md-input-container>
-      <md-button class="md-raised" ng-disabled="!isScriptOk()" ng-click="saveScript()">Save</md-button>
+      <div layout="row">
+        <md-button class="md-raised" ng-disabled="!isScriptOk()" ng-click="saveScript()">
+          Save
+        </md-button>
+        <md-button class="md-raised" ng-click="clearScript()">
+          Clear
+        </md-button>
+      </div>
 
     </div>
     <div layout="column" flex layout-align="top center">
@@ -49,7 +51,7 @@
 
       <md-input-container ng-repeat="variable in variables">
         <div>
-          <label>{{variable}}</label>
+          <label>{{ variable }}</label>
           <input name="variable" ng-model="variableValues[variable]">
         </div>
       </md-input-container>
@@ -57,7 +59,6 @@
     <div layout="column" flex>
       <h2>Output:</h2>
       <div ui-ace="aceOption" readonly ng-model="fullScript">
-
       </div>
     </div>
 
