@@ -54,6 +54,9 @@
           })
           .then(replaceVariables);
 
+      }else{
+          $scope.variables = null;
+          $scope.fullScript = null;
       }
     }, true);
 

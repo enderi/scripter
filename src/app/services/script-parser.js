@@ -22,21 +22,21 @@
     }
 
     function parseVariables(script) {
-      var builtScript = replaceScripts(script);
-      return builtScript.then(function(fullScript) {
+      var builtScript = replaceAllScripts(script);
+      return builtScript
+        .then(function(fullScript) {
+          var splittedTags = getTags(fullScript);
+          var variables = [];
 
-        var splittedTags = getTags(fullScript);
-        var variables = [];
-
-        _.each(splittedTags, function(tag) {
-          if (tag[0] === 'var' && tag.length === 2) {
-            if (!_.contains(variables, tag[1])) {
-              variables.push(tag[1]);
+          _.each(splittedTags, function(tag) {
+            if (tag[0] === 'var' && tag.length === 2) {
+              if (!_.contains(variables, tag[1])) {
+                variables.push(tag[1]);
+              }
             }
-          }
+          });
+          return variables;
         });
-        return variables;
-      });
     }
 
     function parseEmbeddedScripts(script) {
@@ -91,11 +91,13 @@
     }
 
     function replaceVariables(script, variables) {
-      var parsedScript = replaceScripts(script);
+      var parsedScript = replaceAllScripts(script);
       return parsedScript.then(function(newScript) {
         _.each(variables, function(variable, key) {
-          var regExp = new RegExp('#{var:' + key + '}', 'g');
-          newScript = newScript.replace(regExp, variable);
+          if (!_.isEmpty(variable)) {
+            var regExp = new RegExp('#{var:' + key + '}', 'g');
+            newScript = newScript.replace(regExp, variable);
+          }
         });
         return newScript;
       });
@@ -106,27 +108,51 @@
       return script.replace(regExp, emb.code);
     }
 
-    function replaceScripts(script) {
-      var includedScripts = parseEmbeddedScripts(script);
+    function replaceAllScripts(script) {
+      var deferred = $q.defer();
+      replaceScriptsRecursively(script, parseEmbeddedScripts(script))
+        .then(function(data) {
+          deferred.resolve(data);
+        });
+
+      return deferred.promise;
+    }
+
+    function replaceScriptsRecursively(script, includedScripts) {
+      if (_.isEmpty(includedScripts)) {
+        return _createResolved(script);
+      }
+
+      return replaceScripts(script, includedScripts)
+        .then(function(newScript) {
+          return replaceScriptsRecursively(
+            newScript,
+            parseEmbeddedScripts(script));
+        });
+    }
+
+    function replaceScripts(script, foundScriptIds) {
       var scriptPromises = [];
-      _.each(includedScripts, function(scriptId) {
-        var promise = scriptPersistService.get(scriptId);
-        scriptPromises.push(promise);
+      _.each(foundScriptIds, function(scriptId) {
+        scriptPromises.push(scriptPersistService.get(scriptId));
       });
-      return $q.all(scriptPromises)
-        .then(function(embeddedScripts) {
+      if (_.isEmpty(scriptPromises)) {
+        return _createResolved(script);
+      } else {
+        return $q.all(scriptPromises).then(function(embeddedScripts) {
           _.each(embeddedScripts, function(emb) {
             script = replaceEmbeddedScript(script, emb);
           });
           return script;
         });
+      }
     }
 
 
     var service = {
       getVariables: parseVariables,
       replaceVariables: replaceVariables,
-      replaceScripts: replaceScripts
+      replaceScripts: replaceAllScripts
     };
 
     return service;
