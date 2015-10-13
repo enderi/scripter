@@ -58,7 +58,13 @@
     </div>
     <div layout="column" flex>
       <h2>Output:</h2>
-      <div ui-ace="aceOption" readonly ng-model="fullScript">
+      <div ui-ace="{
+          useWrapMode: true,
+          showGutter: false,
+          $blockScrolling: Infinity,
+          mode: {{script.scriptMode || 'JSON'}},
+          onLoad: aceLoaded
+      }" readonly ng-model="fullScript">
       </div>
     </div>
 

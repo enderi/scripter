@@ -80,18 +80,15 @@
       $log.log(_editor);
     };
 
+
+    $scope.modeChanged = function() {
+      if ($scope.script && $scope.script.scriptMode) {
+        _ace.getSession().setMode("ace/mode/" + $scope.script.scriptMode.toLowerCase());
+      }
+    };
+
     $scope.aceOption = {
       mode: ($scope.script && $scope.script.scriptMode || '').toLowerCase(),
-      onLoad: function(_ace) {
-
-        // HACK to have the ace instance in the scope...
-        $scope.modeChanged = function() {
-          if ($scope.script && $scope.script.scriptMode) {
-            _ace.getSession().setMode("ace/mode/" + $scope.script.scriptMode.toLowerCase());
-          }
-        };
-        _ace.$blockScrolling = Infinity;
-      }
     };
 
     function init() {
